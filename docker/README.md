@@ -1,163 +1,148 @@
 # EduMind Docker 部署指南
 
-## 📋 前置要求
+本目录包含EduMind应用的Docker配置文件，支持一键部署。
 
-- Docker
-- Docker Compose
+## 📁 文件说明
 
-## 🚀 快速启动
+- `Dockerfile` - Docker镜像构建文件
+- `docker-compose.yml` - Docker Compose服务编排文件
+- `.dockerignore` - Docker构建忽略文件
+- `start.sh` - Linux/Mac启动脚本
+- `start.bat` - Windows启动脚本
+- `README.md` - 本说明文档
 
-### 1. 配置环境变量
+## 🚀 快速开始
+
+### 1. 准备工作
+
+确保已安装Docker和Docker Compose：
 
 ```bash
-# 复制环境变量模板
-cp ../env.example ../.env
-
-# 编辑 .env 文件，配置API密钥
-# 至少需要配置：
-# OPENAI_API_KEY=your_openai_api_key
-# DEEPSEEK_API_KEY=your_deepseek_api_key
+# 检查Docker版本
+docker --version
+docker-compose --version
 ```
 
 ### 2. 启动服务
 
-**Windows 用户：**
-```bash
-# 双击运行或在命令行执行
-start.bat
-```
+#### 方式一：使用启动脚本
 
-**Linux/Mac 用户：**
+**Linux/Mac:**
 ```bash
-# 给脚本执行权限
+cd docker
 chmod +x start.sh
-# 运行启动脚本
 ./start.sh
 ```
 
-**手动启动：**
-```bash
-# 进入docker目录
+**Windows:**
+```cmd
 cd docker
+start.bat
+```
 
-# 构建并启动
+#### 方式二：手动启动
+
+```bash
+cd docker
 docker-compose up -d
-
-# 查看日志
-docker-compose logs -f
-
-# 停止服务
-docker-compose down
 ```
 
 ### 3. 访问应用
 
-打开浏览器访问: **http://localhost:8501**
+服务启动后，打开浏览器访问：
+- **本地访问**: http://127.0.0.1:8501
 
-## 🔧 Docker 常用命令
+## 📊 服务管理
 
+### 查看服务状态
 ```bash
-# 查看运行状态
 docker-compose ps
+```
 
-# 查看实时日志
+### 查看实时日志
+```bash
 docker-compose logs -f
+```
 
-# 重启服务
-docker-compose restart
-
-# 停止服务
+### 停止服务
+```bash
 docker-compose down
+```
 
-# 完全清理（包括数据卷）
-docker-compose down -v
+### 重启服务
+```bash
+docker-compose restart
+```
 
-# 重新构建镜像
+### 重建镜像（代码更新后）
+```bash
+docker-compose down
 docker-compose build --no-cache
-
-# 进入容器
-docker-compose exec edumind bash
+docker-compose up -d
 ```
 
-## 📁 目录结构
+## 🔧 配置说明
 
-```
-docker/
-├── Dockerfile              # Docker镜像构建文件
-├── docker-compose.yml      # Docker Compose配置
-├── .dockerignore           # Docker忽略文件
-├── start.sh               # Linux/Mac启动脚本
-├── start.bat              # Windows启动脚本
-└── README.md              # 本文档
-```
-
-## 🌐 端口配置
-
+### 端口配置
 - **应用端口**: 8501
-- **访问地址**: http://localhost:8501
+- **访问地址**: 127.0.0.1:8501（仅本地访问）
 
-## 📊 数据持久化
+### 数据持久化
+- `./data` - 应用数据目录
+- `./logs` - 应用日志目录
 
-- **数据目录**: `../data` → `/app/data`
-- **日志目录**: `../logs` → `/app/logs`
+### 环境变量
+- `STREAMLIT_SERVER_HEADLESS=true` - 无头模式运行
+- `STREAMLIT_SERVER_PORT=8501` - 服务端口
+- `STREAMLIT_SERVER_ADDRESS=0.0.0.0` - 监听地址
 
-## 🔍 故障排除
+## 🛠️ 故障排除
 
-### 1. 端口被占用
-```bash
-# 查看端口占用
-netstat -an | grep 8501
+### 常见问题
 
-# 修改端口（在docker-compose.yml中）
-ports:
-  - "8502:8501"  # 改为8502端口
-```
+1. **端口占用**
+   ```bash
+   netstat -ano | findstr :8501  # Windows
+   lsof -i :8501                 # Linux/Mac
+   ```
 
-### 2. 镜像构建失败
-```bash
-# 清理Docker缓存
-docker system prune -a
+2. **容器无法启动**
+   ```bash
+   docker-compose logs edumind
+   ```
 
-# 重新构建
-docker-compose build --no-cache
-```
+3. **权限问题**
+   ```bash
+   # Linux/Mac
+   sudo chown -R $USER:$USER ./data ./logs
+   ```
 
-### 3. 服务启动失败
-```bash
-# 查看详细日志
-docker-compose logs
+4. **重新构建**
+   ```bash
+   docker-compose down
+   docker-compose build --no-cache
+   docker-compose up -d
+   ```
 
-# 检查容器状态
-docker-compose ps
-```
+### 健康检查
 
-## 🛡️ 安全建议
+容器包含健康检查机制：
+- 检查间隔：30秒
+- 超时时间：10秒
+- 重试次数：3次
+- 启动等待：40秒
 
-1. **不要在生产环境中使用默认配置**
-2. **及时更新API密钥**
-3. **定期备份数据目录**
-4. **监控容器资源使用情况**
+## 📝 注意事项
 
-## 📈 性能优化
+1. **本地访问**: 应用绑定到127.0.0.1，只能本地访问
+2. **数据备份**: 定期备份data和logs目录
+3. **性能监控**: 通过`docker stats`监控资源使用
+4. **日志管理**: 定期清理日志文件避免磁盘占满
 
-1. **调整内存限制**：
-```yaml
-services:
-  edumind:
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-        reservations:
-          memory: 1G
-```
+## 🆘 技术支持
 
-2. **使用多阶段构建**：
-```dockerfile
-# 在Dockerfile中添加多阶段构建
-FROM python:3.9-slim as builder
-# ... 构建阶段
-
-FROM python:3.9-slim as runtime
-# ... 运行阶段
-``` 
+如遇问题，请检查：
+1. Docker服务是否正常运行
+2. 端口8501是否被占用
+3. 磁盘空间是否充足
+4. 查看容器日志获取详细错误信息 
