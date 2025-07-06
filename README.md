@@ -184,4 +184,4 @@ streamlit run app.py
 <div align="center">
   <p>Made with ❤️ by EduMind Team</p>
   <p>© 2024 EduMind. All rights reserved.</p>
-</div> 
+</div>
