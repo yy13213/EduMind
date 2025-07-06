@@ -2,7 +2,7 @@ services:
   edumind:
     build:
       context: ..
-      dockerfile: docker/Dockerfile
+      dockerfile: EduMind_docker/Dockerfile
     ports:
       - "127.0.0.1:8501:8501"
     volumes:
