@@ -25,22 +25,7 @@ docker-compose --version
 
 ### 2. 启动服务
 
-#### 方式一：使用启动脚本
-
-**Linux/Mac:**
-```bash
-cd docker
-chmod +x start.sh
-./start.sh
-```
-
-**Windows:**
-```cmd
-cd docker
-start.bat
-```
-
-#### 方式二：手动启动
+#### 快速启动
 
 ```bash
 cd docker
