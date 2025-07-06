@@ -1,0 +1,34 @@
+﻿services:
+  edumind:
+    # 使用本地构建的私有镜像
+    image: yy13213/edumind:latest
+    # 如果镜像不存在，从本地构建
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "127.0.0.1:8501:8501"
+    volumes:
+      - ../data:/app/data
+      - ../logs:/app/logs
+    environment:
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - edumind_network
+
+networks:
+  edumind_network:
+    driver: bridge
+
+volumes:
+  data_volume:
+  logs_volume:
