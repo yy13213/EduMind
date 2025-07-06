@@ -23,8 +23,15 @@ COPY requirements.txt .
 # 安装Python依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 复制项目文件
-COPY . .
+# 复制项目主要文件
+COPY app.py .
+COPY HelloWeb.py .
+COPY test.py .
+COPY homework.py .
+COPY *.ttf ./
+COPY *.png ./
+COPY *.jpg ./
+COPY *.jpeg ./
 
 # 创建必要的目录
 RUN mkdir -p data logs
