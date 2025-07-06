@@ -5,6 +5,7 @@
   
   [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
   [![Streamlit](https://img.shields.io/badge/Streamlit-1.43.2-red.svg)](https://streamlit.io/)
+  [![Docker](https://img.shields.io/badge/Docker-Supported-blue.svg)](https://www.docker.com/)
   [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
   [![Status](https://img.shields.io/badge/Status-Active-brightgreen.svg)]()
 </div>
@@ -54,13 +55,101 @@ EduMind是一个基于多模态大数据与生成式AI模型的高校学生全�
 - **自然语言处理**: WordCloud, 文本分析
 - **AI模型**: OpenAI API, DeepSeek API
 - **文档处理**: python-docx, pdf2image
+- **容器化**: Docker, Docker Compose
 - **其他工具**: Faker (数据生成), Streamlit-extras (UI增强)
 
 ## 📦 安装指南
 
 ### 环境要求
-- Python 3.8+
-- pip 包管理器
+- Python 3.8+ 或 Docker
+- pip 包管理器（非Docker方式）
+
+## 🐳 Docker 部署（推荐）
+
+### 快速启动
+
+1. **克隆项目**
+```bash
+git clone https://github.com/yy13213/EduMind.git
+cd EduMind
+```
+
+2. **配置环境变量**
+```bash
+# 复制环境变量模板
+cp env.example .env
+
+# 编辑 .env 文件，配置API密钥
+# 至少需要配置：
+# OPENAI_API_KEY=your_openai_api_key
+# DEEPSEEK_API_KEY=your_deepseek_api_key
+```
+
+3. **启动服务**
+
+**Windows 用户：**
+```bash
+# 进入docker目录并运行
+cd docker
+start.bat
+```
+
+**Linux/Mac 用户：**
+```bash
+# 进入docker目录
+cd docker
+# 给脚本执行权限
+chmod +x start.sh
+# 运行启动脚本
+./start.sh
+```
+
+**手动启动：**
+```bash
+# 进入docker目录
+cd docker
+
+# 构建并启动
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
+```
+
+4. **访问应用**
+打开浏览器访问: **http://localhost:8501**
+
+### Docker 常用命令
+
+```bash
+# 进入docker目录
+cd docker
+
+# 查看运行状态
+docker-compose ps
+
+# 查看实时日志
+docker-compose logs -f
+
+# 重启服务
+docker-compose restart
+
+# 停止服务
+docker-compose down
+
+# 完全清理（包括数据卷）
+docker-compose down -v
+
+# 重新构建镜像
+docker-compose build --no-cache
+```
+
+> 📋 更多Docker部署详情请查看 [docker/README.md](docker/README.md)
+
+## 🔧 传统安装方式
 
 ### 安装步骤
 
@@ -80,7 +169,7 @@ venv\Scripts\activate  # Windows
 
 3. **安装依赖**
 ```bash
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 
 4. **配置API密钥**
@@ -95,7 +184,13 @@ streamlit run app.py
 ## 🎯 使用指南
 
 ### 启动应用
-运行以下命令启动EduMind平台：
+**Docker方式：**
+```bash
+cd docker
+docker-compose up -d
+```
+
+**传统方式：**
 ```bash
 streamlit run app.py
 ```
@@ -141,6 +236,31 @@ streamlit run app.py
 ### 字体配置
 项目使用仿宋_GB2312字体，确保字体文件`仿宋_GB2312.ttf`在项目根目录。
 
+### Docker配置
+- 默认端口: 8501
+- 数据持久化: `./data` 目录
+- 日志文件: `./logs` 目录
+- 环境变量: `.env` 文件
+
+## 📁 项目结构
+
+```
+EduMind/
+├── app.py                  # 主应用程序
+├── HelloWeb.py            # 功能模块
+├── requirements.txt       # Python依赖
+├── env.example           # 环境变量模板
+├── docker/               # Docker配置目录
+│   ├── Dockerfile        # Docker镜像构建文件
+│   ├── docker-compose.yml # Docker Compose配置
+│   ├── start.sh          # Linux/Mac启动脚本
+│   ├── start.bat         # Windows启动脚本
+│   └── README.md         # Docker部署指南
+├── data/                 # 数据目录
+├── logs/                 # 日志目录
+└── README.md             # 项目说明文档
+```
+
 ## 📈 功能特色
 
 - **多模态数据融合**: 整合学业、行为、心理等多维度数据
@@ -149,6 +269,7 @@ streamlit run app.py
 - **个性化服务**: 为每个学生提供个性化的成长方案
 - **可视化展示**: 丰富的图表和可视化展示
 - **用户友好界面**: 基于Streamlit的现代化Web界面
+- **容器化部署**: 支持Docker一键部署，环境隔离
 
 ## 🤝 贡献指南
 
